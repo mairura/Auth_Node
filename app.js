@@ -1,6 +1,8 @@
 require("dotenv").config();
 require("./config/database").connect();
 const express = require("express");
+const auth = require("./middleware/auth");
+const cors = require("cors");
 var bcrypt = require('bcryptjs');
 var jwt = require("jsonwebtoken");
 
@@ -8,6 +10,8 @@ const app = express();
 
 //middleware
 app.use(express.json());
+app.use(cors());
+app.use(express.json({ limit: "50mb" }));
 
 //importing user context
 const User = require("./model/user");
@@ -39,7 +43,6 @@ app.post("/register", async (req, res) => {
             first_name: firstName,
             last_name: lastName,
             email: email.toLowerCase(),
-            password: encryptedUserPassword,
         });
 
         //Create token
@@ -92,11 +95,16 @@ app.post("/login", async (req, res) => {
             //user
             return res.status(200).json(user);
         }
-        return res.status(400).send("Invalid Credentials 😢 ")
+        return res.status(400).send("Invalid Credentials 😢...Please Register! ")
 
     }catch(err){
         console.log(err);
     }
+});
+
+//Testing Auth
+app.post("/welcome", auth, (req, res) => {
+    res.status(200).send("Welcome to Mairura Enterprise 🤝 ")
 });
 
 module.exports = app;
