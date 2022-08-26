@@ -42,6 +42,7 @@ app.post("/register", async (req, res) => {
         const user = await User.create({
             first_name: firstName,
             last_name: lastName,
+            password: encryptedUserPassword,
             email: email.toLowerCase(),
         });
 
